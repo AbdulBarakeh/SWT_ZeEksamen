@@ -27,16 +27,16 @@ namespace Classes.Control
         private LadeskabState state { get; set; }
 
 
-        private IDoor _door = new Door.Door();
-        private ICharger _charger = new Charger.Charger();
-        private ILogger _logger = new Logger.Logger();
-        private IRFIDReader _reader = new RFIDReader.RFIDReader();
-        private IDisplay _display = new Display.Display();
+        private IDoor _door;
+        private ICharger _charger;
+        private ILogger _logger;
+        private IRFIDReader _reader;
+        private IDisplay _display;
         public Control(IDoor door, ICharger charger, ILogger logger, IRFIDReader reader, IDisplay display)
         {
             door.DoorOpenedEvent += HandleDoorOpenedEvent;
             door.DoorClosedEvent += HandleDoorClosedEvent;
-            reader.RFChipRead += HandleRFChipRead;
+            reader.RFChipRead += Reader_RFChipRead;
 
             _door = door;
             _charger = charger;
@@ -47,21 +47,22 @@ namespace Classes.Control
             
         }
 
-        private void HandleRFChipRead(object sender, Guid e)
+        private void Reader_RFChipRead(object sender, RFReaderChangedEventArgs e)
         {
-            _oldId = e;
+            _oldId = e._ID;
+            state = LadeskabState.Available;
             _display.displayMsg($"Id: {_oldId} received ");
         }
 
-        private void HandleDoorClosedEvent(object sender, DoorStateChangedEventArgs e)
+        private void HandleDoorClosedEvent(object sender, EventArgs e)
         {
-            state = e.DoorState;
+            state = LadeskabState.Locked;
             _display.displayMsg("State Changed to closed");
         }
 
-        private void HandleDoorOpenedEvent(object sender, DoorStateChangedEventArgs e)
+        private void HandleDoorOpenedEvent(object sender, EventArgs e)
         {
-            state = e.DoorState;
+            state = LadeskabState.DoorOpen;
             _display.displayMsg("State Changed to open");
         }
 
@@ -89,12 +90,14 @@ namespace Classes.Control
                     break;
 
                 case LadeskabState.DoorOpen:
-                    // Ignore
+                    _display.displayMsg("Nothing");
+
                     break;
 
                 case LadeskabState.Locked:
                     // Check for correct ID
-                    if (id == _oldId)
+                    
+                    if (CheckId(_oldId, id))
                     {
                         _charger.StopCharge();
                         _door.UnlockDoor();
