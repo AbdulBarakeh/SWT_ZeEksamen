@@ -4,26 +4,31 @@ using System.Text;
 
 namespace Classes.Door
 {
-    class Door : IDoor
+    public class Door : IDoor
     {
-        public EventHandler DoorOpened()
+        public event EventHandler<DoorStateChangedEventArgs> DoorOpenedEvent;
+        public event EventHandler<DoorStateChangedEventArgs> DoorClosedEvent;
+
+        public virtual void OnDoorOpenedEvent(DoorStateChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            DoorOpenedEvent?.Invoke(this,e);
         }
 
-        public EventHandler DoorClosed()
+        public virtual void OnDoorClosedEvent(DoorStateChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            DoorClosedEvent?.Invoke(this,e);
         }
 
         public void LockDoor()
         {
-
+            
+            Console.WriteLine("Door is locked");
         }
 
         public void UnlockDoor()
         {
 
+            Console.WriteLine("Door is locked");
         }
     }
 }

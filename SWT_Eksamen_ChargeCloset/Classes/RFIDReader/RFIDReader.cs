@@ -6,9 +6,11 @@ namespace Classes.RFIDReader
 {
     class RFIDReader : IRFIDReader
     {
-        public Guid RFChipRead(Guid ID)
+        public event EventHandler<Guid> RFChipRead;
+
+        protected virtual void OnRFChipRead(Guid e)
         {
-            return ID;
+            RFChipRead?.Invoke(this,e);
         }
     }
 }

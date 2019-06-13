@@ -4,6 +4,6 @@ namespace Classes.RFIDReader
 {
     public interface IRFIDReader
     {
-        Guid RFChipRead(Guid ID);
+        event EventHandler<Guid> RFChipRead;
     }
 }
