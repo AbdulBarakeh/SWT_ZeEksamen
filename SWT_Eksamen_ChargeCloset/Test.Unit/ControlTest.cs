@@ -86,10 +86,14 @@ namespace Test.Unit
         [Test]
         public void StateLocked_CheckIdFalse()
         {
-            var id = Guid.NewGuid();
-            _charger.IsConnected().Returns(true);
-            _reader.RFChipRead += Raise.EventWith<RFReaderChangedEventArgs>(new RFReaderChangedEventArgs(id));
-            _uut.RFIDDetected(id);
+            //possibility 1
+            //var id = Guid.NewGuid();
+            //_charger.IsConnected().Returns(true);
+            //_reader.RFChipRead += Raise.EventWith<RFReaderChangedEventArgs>(new RFReaderChangedEventArgs(id));
+            //_uut.RFIDDetected(id);
+
+            //Posibility 2
+            _door.DoorClosedEvent += Raise.Event();
 
             _uut.RFIDDetected(Guid.NewGuid());
             _display.Received().displayMsg("Forkert RFID tag");

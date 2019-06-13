@@ -74,7 +74,7 @@ namespace Classes.Control
                     // Check for ladeforbindelse
                     if (_charger.IsConnected())
                     {
-                        _door.LockDoor();
+                        Locked();
                         _charger.StartCharge();
                         _oldId = id;
                         LogDoorlocked(id);
@@ -100,7 +100,7 @@ namespace Classes.Control
                     if (CheckId(_oldId, id))
                     {
                         _charger.StopCharge();
-                        _door.UnlockDoor();
+                        Unlocked();
                         LogDoorunlocked(id);
 
                         _display.displayMsg("Tag din telefon ud af skabet og luk døren");
